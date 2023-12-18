@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "665033827060",
+    "project_id": "verifyme-828b4",
+    "storage_bucket": "verifyme-828b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665033827060:android:61ef124f060964933674a1",
+        "android_client_info": {
+          "package_name": "com.example.verifyme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB83DSo3ZOIE34SPTlsra638xO5OS5fFkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

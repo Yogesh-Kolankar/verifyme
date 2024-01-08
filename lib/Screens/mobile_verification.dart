@@ -27,7 +27,7 @@ class _MobileVerificationState extends State<MobileVerification> {
             //height: 100.h,
             //color: Colors.black,
             child: Image.asset(
-              'lib/images/Verifyme_yellow.png',
+              'assets/images/Verifyme_yellow.png',
               color: Colors.yellow,
               fit: BoxFit.cover,
               //height: 70.sp,

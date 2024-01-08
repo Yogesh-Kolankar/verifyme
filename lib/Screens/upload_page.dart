@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:verifyme/Screens/scan_resources.dart';
-import 'package:verifyme/Screens/upload_certificate.dart';
+import 'package:verifyme/Screens/upload%20certificate/upload_certificate.dart';
 import 'package:verifyme/Screens/upload_resources.dart';
 
 class UploadPage extends StatefulWidget {
@@ -15,32 +15,6 @@ class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamgarage.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamsim.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamperson.png",
-                  height: 20.h,
-                  scale: 1,
-                ),
-                label: "")
-          ]),
       body: Stack(children: [
         Container(
             //color: Colors.blue,
@@ -67,7 +41,7 @@ class _UploadPageState extends State<UploadPage> {
             //color: Colors.black,
             child: Image.asset(
               fit: BoxFit.cover,
-              "lib/images/coffeebreak.png",
+              "assets/images/coffeebreak.png",
               height: 150.sp,
             ),
           ),
@@ -90,7 +64,7 @@ class _UploadPageState extends State<UploadPage> {
                 child: Stack(
                   children: [
                     Image.asset(
-                      'lib/images/Group.png',
+                      'assets/images/Group.png',
                       height: 110.sp,
                     ),
                     Center(
@@ -100,7 +74,7 @@ class _UploadPageState extends State<UploadPage> {
                             height: 10.h,
                           ),
                           Image.asset(
-                            'lib/images/cloudcomputing.png',
+                            'assets/images/cloudcomputing.png',
                             height: 50.sp,
                           ),
                           Text(
@@ -125,7 +99,7 @@ class _UploadPageState extends State<UploadPage> {
                 child: Stack(
                   children: [
                     Image.asset(
-                      'lib/images/Group.png',
+                      'assets/images/Group.png',
                       height: 110.sp,
                     ),
                     Center(
@@ -135,7 +109,7 @@ class _UploadPageState extends State<UploadPage> {
                             height: 10.h,
                           ),
                           Image.asset(
-                            'lib/images/cloudcomputing.png',
+                            'assets/images/cloudcomputing.png',
                             height: 50.sp,
                           ),
                           Text(
@@ -160,7 +134,7 @@ class _UploadPageState extends State<UploadPage> {
                 child: Stack(
                   children: [
                     Image.asset(
-                      'lib/images/Group.png',
+                      'assets/images/Group.png',
                       height: 110.sp,
                     ),
                     Center(
@@ -170,7 +144,7 @@ class _UploadPageState extends State<UploadPage> {
                             height: 10.h,
                           ),
                           Image.asset(
-                            'lib/images/scan.png',
+                            'assets/images/scan.png',
                             height: 50.sp,
                           ),
                           Text(

@@ -29,21 +29,21 @@ class _ScanResourcesState extends State<ScanResources> {
           items: [
             BottomNavigationBarItem(
                 icon: Image.asset(
-                  "lib/images/bottamgarage.png",
+                  "assets/images/bottamgarage.png",
                   height: 30.h,
                   scale: 1,
                 ),
                 label: ""),
             BottomNavigationBarItem(
                 icon: Image.asset(
-                  "lib/images/bottamsim.png",
+                  "assets/images/bottamsim.png",
                   height: 30.h,
                   scale: 1,
                 ),
                 label: ""),
             BottomNavigationBarItem(
                 icon: Image.asset(
-                  "lib/images/bottamperson.png",
+                  "assets/images/bottamperson.png",
                   height: 20.h,
                   scale: 1,
                 ),
@@ -222,7 +222,7 @@ class _ScanResourcesState extends State<ScanResources> {
           right: 40,
           child: Container(
             child: Image.asset(
-              "lib/images/scanbig.png",
+              "assets/images/scanbig.png",
               height: 10.sp,
             ),
             height: 250.h,

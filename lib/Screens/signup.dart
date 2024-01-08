@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:verifyme/Screens/login.dart';
-import 'package:verifyme/model/usermodel.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -21,8 +20,10 @@ class _SignUpState extends State<SignUp> {
   final confirmPasswordController = TextEditingController();
   final formkey = GlobalKey<FormState>();
   final auth = FirebaseAuth.instance;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  bool isChecked = false;
 
-  signUp(email, password, firstName, lastName, confirmPassword,
+  /*signUp(email, password, firstName, lastName, confirmPassword,
       BuildContext context) async {
     try {
       await auth
@@ -41,44 +42,65 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  // signUp(email, password, firstName, lastName, confirmPassword) async {
-  //   try {
-  //     await auth
-  //         .createUserWithEmailAndPassword(email: email, password: password)
-  //         .then(
-  //           (value) => {
-  //             postDetailsToFirestore(
-  //                 email, firstName, lastName, password, confirmPassword),
-  //           },
-  //         );
-  //     Navigator.of(context as BuildContext)
-  //         .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
-
-  //     // Navigator.of(context as BuildContext)
-  //     //     .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
-  //   } catch (e) {
-  //     Fluttertoast.showToast(msg: e.toString());
-  //   }
-  // }
-
   postDetailsToFirestore(
       email, firstName, lastName, password, confirmPassword) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = auth.currentUser;
 
-    UserModel userModel = UserModel();
-    userModel.uid = user!.uid;
-    userModel.email = user.email;
-    userModel.firstName = firstName.text;
-    userModel.lastName = lastName.text;
-    userModel.password = password.text;
-    userModel.confirmPassword = confirmPassword.text;
-    await firebaseFirestore
-        .collection("allUsers")
-        .doc(user.uid)
-        .set(userModel.toMap());
-    Fluttertoast.showToast(msg: "Account created successfuly");
-    print("aaa::${userModel.toMap()}");
+    // UserModel userModel = UserModel();
+    //userModel.uid = user!.uid;
+    //userModel.email = user.email;
+    //userModel.firstName = firstName.text;
+    //userModel.lastName = lastName.text;
+    //userModel.password = password.text;
+    //userModel.confirmPassword = confirmPassword.text;
+    try {
+      await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // Store user details in Firestore
+      await firebaseFirestore.collection("allUsers").add({
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'password': password,
+        'confirmPassword': confirmPassword
+      });
+      //.doc(user.uid)
+      //.set(userModel.toMap());
+
+      Fluttertoast.showToast(msg: "Account created successfully");
+    } catch (e) {
+      print("Error creating user: $e");
+      Fluttertoast.showToast(msg: "Error creating account: $e");
+    }
+  }*/
+
+  Future adduser(email, password, firstName, lastName, confirmPassword) async {
+    await firebaseFirestore.collection("allUsers").add({
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'password': password,
+      'confirmPassword': confirmPassword
+    });
+  }
+
+  signUp(email, password, firstName, lastName, confirmPassword) async {
+    try {
+      await auth.createUserWithEmailAndPassword(
+          email: email.toString(), password: password.toString());
+
+      adduser(email.toString(), password.toString(), firstName.toString(),
+          lastName.toString(), confirmPassword.toString());
+      Fluttertoast.showToast(msg: "Account created successfully");
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+    } catch (e) {
+      print("Error creating user: $e");
+      Fluttertoast.showToast(msg: "Error creating account: $e");
+    }
   }
 
   @override
@@ -104,116 +126,158 @@ class _SignUpState extends State<SignUp> {
                   style: TextStyle(fontSize: 12.sp)),
             ),
             SizedBox(height: 30.h),
-            Center(
-              child: SizedBox(
-                width: 300.w,
-                child: TextField(
-                  controller: firstNameController,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(23.sp),
-                      isDense: true,
-                      labelText: "First Name",
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          'lib/images/textfielduser.png',
-                          scale: 1,
-                        ),
+            Form(
+              key: formkey,
+              child: Column(
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 300.w,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter first name';
+                          }
+                          return null;
+                        },
+                        controller: firstNameController,
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(color: Colors.amber),
+                            contentPadding: EdgeInsets.all(23.sp),
+                            isDense: true,
+                            labelText: "First Name",
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Image.asset(
+                                'assets/images/textfielduser.png',
+                                scale: 1,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14.r))),
                       ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14.r))),
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Center(
-              child: SizedBox(
-                width: 300.w,
-                child: TextField(
-                  controller: lastNameController,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(23.sp),
-                      isDense: true,
-                      labelText: "Last Name",
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          'lib/images/textfielduser.png',
-                          scale: 1,
-                        ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Center(
+                    child: SizedBox(
+                      width: 300.w,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter last name';
+                          }
+                          return null;
+                        },
+                        controller: lastNameController,
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(color: Colors.amber),
+                            contentPadding: EdgeInsets.all(23.sp),
+                            isDense: true,
+                            labelText: "Last Name",
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Image.asset(
+                                'assets/images/textfielduser.png',
+                                scale: 1,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                                gapPadding: 20.w,
+                                borderRadius: BorderRadius.circular(14.r))),
                       ),
-                      border: OutlineInputBorder(
-                          gapPadding: 20.w,
-                          borderRadius: BorderRadius.circular(14.r))),
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Center(
-              child: Container(
-                width: 300.w,
-                child: TextField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(23.sp),
-                      isDense: true,
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Center(
+                    child: Container(
+                      width: 300.w,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter email';
+                          }
+                          return null;
+                        },
+                        controller: emailController,
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(color: Colors.amber),
+                            contentPadding: EdgeInsets.all(23.sp),
+                            isDense: true,
 
-                      //label: Text("Username"),
-                      labelText: "Email",
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          'lib/images/@.png',
-                          scale: 1,
-                        ),
+                            //label: Text("Username"),
+                            labelText: "Email",
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Image.asset(
+                                'assets/images/@.png',
+                                scale: 1,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14.r))),
                       ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14.r))),
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Center(
-              child: SizedBox(
-                width: 300.w,
-                child: TextField(
-                  controller: passwordController,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(23.sp),
-                      isDense: true,
-                      labelText: "Password",
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          'lib/images/textfieldpassword.png',
-                          scale: 1,
-                        ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Center(
+                    child: SizedBox(
+                      width: 300.w,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(color: Colors.amber),
+                            contentPadding: EdgeInsets.all(23.sp),
+                            isDense: true,
+                            labelText: "Password",
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Image.asset(
+                                'assets/images/textfieldpassword.png',
+                                scale: 1,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14.r))),
                       ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14.r))),
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Center(
-              child: SizedBox(
-                width: 300.w,
-                child: TextField(
-                  controller: confirmPasswordController,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(23.sp),
-                      isDense: true,
-                      labelText: "Re-type Password",
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          'lib/images/textfieldpassword.png',
-                          scale: 1,
-                        ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Center(
+                    child: SizedBox(
+                      width: 300.w,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please confirm password';
+                          }
+                          return null;
+                        },
+                        controller: confirmPasswordController,
+                        decoration: InputDecoration(
+                            errorStyle: TextStyle(color: Colors.amber),
+                            contentPadding: EdgeInsets.all(23.sp),
+                            isDense: true,
+                            labelText: "Re-type Password",
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Image.asset(
+                                'assets/images/textfieldpassword.png',
+                                scale: 1,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14.r))),
                       ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14.r))),
-                ),
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 10.h),
@@ -222,13 +286,19 @@ class _SignUpState extends State<SignUp> {
               child: Row(
                 children: [
                   Checkbox(
+                    checkColor: Colors.white,
+                    activeColor: Colors.amber,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.blue),
                         borderRadius: BorderRadius.circular(
                           6.r,
                         )),
-                    value: false,
-                    onChanged: (value) {},
+                    value: isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        isChecked = value!;
+                      });
+                    },
                   ),
                   Text("Accept term & conditions",
                       style: TextStyle(fontSize: 12.sp)),
@@ -239,13 +309,14 @@ class _SignUpState extends State<SignUp> {
             Center(
               child: GestureDetector(
                 onTap: () {
+                  if (formkey.currentState!.validate()) {}
                   signUp(
                     emailController.text,
                     passwordController.text,
                     firstNameController.text,
                     lastNameController.text,
                     confirmPasswordController.text,
-                    context,
+                    //context,
                   );
                 },
                 child: Container(

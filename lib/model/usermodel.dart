@@ -38,3 +38,29 @@ class UserModel {
     };
   }
 }
+
+/* 
+
+
+  postDetailsToFirestore(
+      email, firstName, lastName, password, confirmPassword) async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = auth.currentUser;
+
+    UserModel userModel = UserModel();
+    userModel.uid = user!.uid;
+    userModel.email = user.email;
+    userModel.firstName = firstName.text;
+    userModel.lastName = lastName.text;
+    userModel.password = password.text;
+    userModel.confirmPassword = confirmPassword.text;
+    await firebaseFirestore
+        .collection("allUsers")
+        .doc(user.uid)
+        .set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account created successfuly");
+    print("aaa::${userModel.toMap()}");
+  }
+
+
+*/

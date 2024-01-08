@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:verifyme/Screens/bottambar.dart';
 import 'package:verifyme/Screens/forget_password.dart';
-import 'package:verifyme/Screens/profile_page.dart';
 import 'package:verifyme/Screens/signup.dart';
 
 class Login extends StatefulWidget {
@@ -18,22 +18,33 @@ class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final auth = FirebaseAuth.instance;
+  bool isChecked = false;
+  bool isClicked = true;
+  bool hiddenPassword = true;
+  bool isLoading = false;
 
   signIn(email, password) async {
-    // if (email.validate()) {
+    setState(() {
+      isLoading = true; // Set the flag to true when the sign-in process starts
+    });
+
     await auth
         .signInWithEmailAndPassword(
             email: email.toString(), password: password.toString())
         .then((value) => {
               Fluttertoast.showToast(msg: "Login Successfully"),
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const ProfilePage()))
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const ScreenChnages()))
             })
+        // ignore: body_might_complete_normally_catch_error
         .catchError((e) {
-      print(e);
-      Fluttertoast.showToast(gravity: ToastGravity.BOTTOM, msg: e!.message);
+      Fluttertoast.showToast(gravity: ToastGravity.BOTTOM, msg: e.message);
+
+      setState(() {
+        isLoading =
+            false; // Set the flag back to false when the sign-in process completes
+      });
     });
-    // }
   }
 
   @override
@@ -55,7 +66,7 @@ class _LoginState extends State<Login> {
                   //height: 100.h,
                   //color: Colors.black,
                   child: Image.asset(
-                    'lib/images/Verifyme_yellow.png',
+                    'assets/images/Verifyme_yellow.png',
                     color: Colors.yellow,
                     fit: BoxFit.cover,
                     //height: 80.sp,
@@ -76,66 +87,112 @@ class _LoginState extends State<Login> {
                     style: TextStyle(fontSize: 12.sp)),
               ),
               SizedBox(height: 20.h),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 30.w),
-                width: 310.w,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(14.r)),
-                child: TextField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding: EdgeInsets.all(14.sp),
-                      isDense: true,
-                      labelText: "Username",
-                      labelStyle: TextStyle(
-                          fontSize: 16.sp, fontWeight: FontWeight.bold),
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          'lib/images/textfielduser.png',
-                          scale: 1,
+              Form(
+                  key: formkey,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 30, right: 30),
+                    child: Column(
+                      children: [
+                        Theme(
+                          data: Theme.of(context).copyWith(
+                            primaryColor: Colors.yellow, // Your primary color
+                            // Change this to the desired color
+                          ),
+                          child: TextFormField(
+                            onSaved: (value) {
+                              emailController.text = value!;
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Please enter your email";
+                              }
+                              if (!RegExp(
+                                      "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                  .hasMatch(value)) {
+                                return 'Please enter valid email';
+                              }
+                              return null;
+                            },
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.amber),
+                              contentPadding: EdgeInsets.all(23.sp),
+                              isDense: true,
+                              border: OutlineInputBorder(
+                                  gapPadding: 20.w,
+                                  borderRadius: BorderRadius.circular(14.r)),
+                              labelText: "Username",
+                              labelStyle: TextStyle(
+                                  fontSize: 16.sp, fontWeight: FontWeight.bold),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: Image.asset(
+                                  'assets/images/textfielduser.png',
+                                  scale: 1,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      border: InputBorder.none),
-                ),
-              ),
-              SizedBox(height: 15.h),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 30.w),
-                width: 310.w,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(14.r)),
-                child: TextField(
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: InputBorder.none,
-                      suffixIcon: Padding(
-                        padding: EdgeInsets.only(right: 10.w),
-                        child: Icon(
-                          Icons.visibility_off_outlined,
-                          size: 20.sp,
-                          color: Colors.blue.shade200,
-                        ),
-                      ),
-                      contentPadding: EdgeInsets.all(14.sp),
-                      isDense: true,
-                      labelText: "Password",
-                      labelStyle: TextStyle(
-                          fontSize: 16.sp, fontWeight: FontWeight.bold),
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Image.asset(
-                          'lib/images/textfieldpassword.png',
-                          scale: 1,
-                        ),
-                      ),
-                    )),
-              ),
+                        SizedBox(height: 15.h),
+                        TextFormField(
+                            onSaved: (value) {
+                              passwordController.text = value!;
+                            },
+                            validator: (value) {
+                              RegExp regex = RegExp(r'^.{6,}$');
+                              if (value!.isEmpty) {
+                                return "Please enter your password";
+                              }
+                              if (!regex.hasMatch(value)) {
+                                return "Please enter valid password(min. 6 character)";
+                              }
+                              return null;
+                            },
+                            controller: passwordController,
+                            obscureText: hiddenPassword,
+                            decoration: InputDecoration(
+                              errorStyle: TextStyle(color: Colors.amber),
+                              border: OutlineInputBorder(
+                                  gapPadding: 20.w,
+                                  borderRadius: BorderRadius.circular(14.r)),
+                              suffixIcon: Padding(
+                                  padding: EdgeInsets.only(right: 10.w),
+                                  child: IconButton(
+                                    icon: isClicked
+                                        ? Icon(
+                                            Icons.visibility_off_outlined,
+                                            size: 20.sp,
+                                            color: Colors.blue.shade300,
+                                          )
+                                        : Icon(
+                                            Icons.visibility_outlined,
+                                            size: 20.sp,
+                                            color: Colors.blue.shade300,
+                                          ),
+                                    onPressed: () {
+                                      setState(() {
+                                        isClicked = !isClicked;
+                                        hiddenPassword = !hiddenPassword;
+                                      });
+                                    },
+                                  )),
+                              contentPadding: EdgeInsets.all(23.sp),
+                              isDense: true,
+                              labelText: "Password",
+                              labelStyle: TextStyle(
+                                  fontSize: 16.sp, fontWeight: FontWeight.bold),
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: Image.asset(
+                                  'assets/images/textfieldpassword.png',
+                                  scale: 1,
+                                ),
+                              ),
+                            )),
+                      ],
+                    ),
+                  )),
               SizedBox(height: 16.h),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 22.w),
@@ -146,13 +203,19 @@ class _LoginState extends State<Login> {
                     Row(
                       children: [
                         Checkbox(
+                          checkColor: Colors.white,
+                          activeColor: Colors.amber,
                           shape: RoundedRectangleBorder(
                               side: const BorderSide(color: Colors.blue),
                               borderRadius: BorderRadius.circular(
                                 6,
                               )),
-                          value: false,
-                          onChanged: (value) {},
+                          value: isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              isChecked = value!;
+                            });
+                          },
                         ),
                         Text(
                           "Remember me",
@@ -181,14 +244,31 @@ class _LoginState extends State<Login> {
               ),
               SizedBox(height: 20.h),
               GestureDetector(
-                onTap: () {
-                  /*Navigator.push(
+                onTap: isLoading
+                    ? null
+                    : () {
+                        // if (emailController.text.isEmpty ||
+                        //     passwordController.text.isEmpty) {
+                        //   // Show a toast message for empty fields
+                        //   Fluttertoast.showToast(
+                        //     msg: 'Please fill in all fields',
+                        //     toastLength: Toast.LENGTH_SHORT,
+                        //     gravity: ToastGravity.BOTTOM,
+                        //     timeInSecForIosWeb: 1,
+                        //     backgroundColor: Colors.yellow,
+                        //     textColor: Colors.black,
+                        //   );
+                        //   return; // Exit the function if fields are empty
+                        // }
+                        if (formkey.currentState!.validate()) {}
+
+                        /*Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const ProfilePage(),
                       ));*/
-                  signIn(emailController.text, passwordController.text);
-                },
+                        signIn(emailController.text, passwordController.text);
+                      },
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 30.w),
                   decoration: BoxDecoration(
@@ -214,12 +294,14 @@ class _LoginState extends State<Login> {
                   ),
                   width: 310.w,
                   height: 50.h,
-                  child: Center(
-                      child: Text(
-                    "SIGN IN",
-                    style:
-                        TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-                  )),
+                  child: isLoading
+                      ? CircularProgressIndicator()
+                      : Center(
+                          child: Text(
+                          "SIGN IN",
+                          style: TextStyle(
+                              fontSize: 18.sp, fontWeight: FontWeight.bold),
+                        )),
                 ),
               ),
               SizedBox(height: 20.h),

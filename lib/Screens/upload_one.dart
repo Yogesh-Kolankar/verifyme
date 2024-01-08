@@ -13,32 +13,6 @@ class _UploadOneState extends State<UploadOne> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamgarage.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamsim.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamperson.png",
-                  height: 20.h,
-                  scale: 1,
-                ),
-                label: "")
-          ]),
       body: Stack(children: [
         Container(
             //color: Colors.blue,
@@ -65,7 +39,7 @@ class _UploadOneState extends State<UploadOne> {
             //color: Colors.black,
             child: Image.asset(
               fit: BoxFit.cover,
-              "lib/images/coffeebreak.png",
+              "assets/images/coffeebreak.png",
               height: 150.sp,
             ),
           ),
@@ -77,7 +51,7 @@ class _UploadOneState extends State<UploadOne> {
           child: SizedBox(
             height: 100.sp,
             //color: Colors.black,
-            child: Image.asset("lib/images/ProfilePicture.png"),
+            child: Image.asset("assets/images/ProfilePicture.png"),
           ),
         ),
         Positioned(

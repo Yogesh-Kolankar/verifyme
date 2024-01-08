@@ -27,7 +27,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 //color: Colors.black,
                 child: Image.asset(
               fit: BoxFit.cover,
-              'lib/images/verify.png',
+              'assets/images/verify.png',
               height: 80.sp,
             )),
             SizedBox(

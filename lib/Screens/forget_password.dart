@@ -1,6 +1,8 @@
+import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:verifyme/Screens/change_password.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:verifyme/Screens/mobile_verification.dart';
 
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({super.key});
@@ -10,6 +12,15 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
+  EmailOTP myauth = EmailOTP();
+
+  final TextEditingController emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +33,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           //height: 100.h,
           //color: Colors.black,
           child: Image.asset(
-            'lib/images/Verifyme_yellow.png',
+            'assets/images/Verifyme_yellow.png',
             color: Colors.yellow,
             fit: BoxFit.cover,
             //height: 70.sp,
@@ -46,6 +57,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         SizedBox(
           width: 320.w,
           child: TextField(
+            controller: emailController,
             decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -60,7 +72,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 suffixIcon: Padding(
                     padding: EdgeInsets.only(right: 6.w),
                     child: Image.asset(
-                      'lib/images/openmail.png',
+                      'assets/images/openmail.png',
                       scale: 1,
                     )),
                 enabledBorder: OutlineInputBorder(
@@ -93,13 +105,40 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         ),
         SizedBox(height: 10.h),
         GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChangePassword(),
-                ));
+          onTap: () async {
+            myauth.setConfig(
+                appEmail: "me@rohitchouhan.com",
+                appName: "Email OTP",
+                userEmail: emailController.text,
+                otpLength: 6,
+                otpType: OTPType.digitsOnly);
+
+            try {
+              if (await myauth.sendOTP() == true) {
+                print("otp send");
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MobileVerification(),
+                  ),
+                );
+              } else {
+                print("otp not send ");
+              }
+            } catch (e) {
+              Fluttertoast.showToast(msg: e.toString());
+              print(e);
+            }
           },
+          /*sendOtp();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MobileVerification(),
+              ),
+            );*/
+
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.r),

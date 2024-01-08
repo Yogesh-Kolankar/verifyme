@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -11,35 +13,30 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final user = FirebaseAuth.instance.currentUser!;
+
+  Map<String, dynamic>? loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("allUsers")
+        .doc(user.uid)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        setState(() {
+          loggedInUser = doc.data();
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("aaa::$loggedInUser");
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamgarage.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamsim.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamperson.png",
-                  height: 20.h,
-                  scale: 1,
-                ),
-                label: "")
-          ]),
       body: Stack(
         children: [
           Container(
@@ -67,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
               //color: Colors.black,
               child: Image.asset(
                 fit: BoxFit.cover,
-                "lib/images/coffeebreak.png",
+                "assets/images/coffeebreak.png",
                 height: 150.sp,
               ),
             ),
@@ -80,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: SizedBox(
                 height: 100.sp,
                 //color: Colors.black,
-                child: Image.asset("lib/images/ProfilePicture.png"),
+                child: Image.asset("assets/images/ProfilePicture.png"),
               ),
             ),
           ),
@@ -95,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
-                    child: Text("Denial Jhon",
+                    child: Text(user.email!,
                         style: TextStyle(
                             fontSize: 20.sp, fontWeight: FontWeight.bold)),
                   ),
@@ -149,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 width: 5.w,
                               ),
                               Image.asset(
-                                "lib/images/pdffile.png",
+                                "assets/images/pdffile.png",
                                 height: 50.sp,
                               ),
                               Column(

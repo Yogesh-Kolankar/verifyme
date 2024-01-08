@@ -46,6 +46,12 @@ dependencies:
   firebase_auth: ^4.15.2
   cloud_firestore: ^4.13.6
   fluttertoast: ^8.2.4
+  email_otp: ^2.1.1
+  email_auth: ^1.1.1
+  http: ^1.1.2
+  persistent_bottom_nav_bar: ^5.0.2
+  file_picker: ^6.1.1
+  
 
 dev_dependencies:
   flutter_test:
@@ -71,7 +77,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - lib/images/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

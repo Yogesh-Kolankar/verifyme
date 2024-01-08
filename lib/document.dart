@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:verifyme/Screens/login.dart';
 
 class DocumentScreen extends StatefulWidget {
   const DocumentScreen({super.key});
@@ -9,6 +13,8 @@ class DocumentScreen extends StatefulWidget {
 }
 
 class _DocumentScreenState extends State<DocumentScreen> {
+  final user = FirebaseAuth.instance.currentUser!;
+
   String? valueChange = 'Today';
   List listItem = ['Today', 'Toworrow', 'Last Week'];
   List<bool> isSelectedList = List.generate(5, (index) => false);
@@ -17,36 +23,8 @@ class _DocumentScreenState extends State<DocumentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamgarage.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamsim.png",
-                  height: 30.h,
-                  scale: 1,
-                ),
-                label: ""),
-            BottomNavigationBarItem(
-                icon: Image.asset(
-                  "lib/images/bottamperson.png",
-                  height: 20.h,
-                  scale: 1,
-                ),
-                label: "")
-          ]),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -61,11 +39,17 @@ class _DocumentScreenState extends State<DocumentScreen> {
                     Icons.arrow_back,
                     size: 20.sp,
                   ),
-                  Icon(
-                    Icons.settings,
-                    size: 25.sp,
-                    color: Colors.blueGrey.shade700,
-                  )
+                  IconButton(
+                      onPressed: () {
+                        FirebaseAuth.instance.signOut();
+                        PersistentNavBarNavigator.pushNewScreen(context,
+                            screen: Login(), withNavBar: false);
+                      },
+                      icon: Icon(
+                        Icons.settings,
+                        size: 25.sp,
+                        color: Colors.blueGrey.shade700,
+                      ))
                 ],
               ),
             ),
@@ -186,7 +170,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                               ),
                               minVerticalPadding: 10,
                               leading: Image.asset(
-                                "lib/images/pdf.png",
+                                "assets/images/pdf.png",
                                 height: 40.sp,
                               ),
                               trailing: Icon(
@@ -252,7 +236,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                               ),
                               minVerticalPadding: 10,
                               leading: Image.asset(
-                                "lib/images/pdf.png",
+                                "assets/images/pdf.png",
                                 height: 40.sp,
                               ),
                               trailing: Icon(

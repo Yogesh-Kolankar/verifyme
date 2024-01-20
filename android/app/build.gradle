@@ -28,6 +28,9 @@ android {
     namespace "com.example.verifyme"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+    packagingOptions {
+        exclude '/lib/arm64-v8a/libc++_shared.so'
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -47,7 +50,7 @@ android {
         applicationId "com.example.verifyme"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

@@ -247,26 +247,8 @@ class _LoginState extends State<Login> {
                 onTap: isLoading
                     ? null
                     : () {
-                        // if (emailController.text.isEmpty ||
-                        //     passwordController.text.isEmpty) {
-                        //   // Show a toast message for empty fields
-                        //   Fluttertoast.showToast(
-                        //     msg: 'Please fill in all fields',
-                        //     toastLength: Toast.LENGTH_SHORT,
-                        //     gravity: ToastGravity.BOTTOM,
-                        //     timeInSecForIosWeb: 1,
-                        //     backgroundColor: Colors.yellow,
-                        //     textColor: Colors.black,
-                        //   );
-                        //   return; // Exit the function if fields are empty
-                        // }
                         if (formkey.currentState!.validate()) {}
 
-                        /*Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProfilePage(),
-                      ));*/
                         signIn(emailController.text, passwordController.text);
                       },
                 child: Container(
@@ -295,7 +277,9 @@ class _LoginState extends State<Login> {
                   width: 310.w,
                   height: 50.h,
                   child: isLoading
-                      ? CircularProgressIndicator()
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
                       : Center(
                           child: Text(
                           "SIGN IN",

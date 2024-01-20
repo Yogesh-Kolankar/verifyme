@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:verifyme/Screens/upload_two.dart';
 import 'package:verifyme/Screens/upload%20certificate/sub_upload_certificate.dart';
 
@@ -28,12 +29,18 @@ class _UploadCertificateState extends State<UploadCertificate> {
   bool isContainerEnabled5 = false;
 
   openFile(List<PlatformFile> files) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Display(
-                  file: files,
-                )));
+    PersistentNavBarNavigator.pushNewScreen(context,
+        screen: Display(
+          file: files,
+        ),
+        withNavBar: false);
+
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => Display(
+    //               file: files,
+    //             )));
   }
 
   @override
@@ -128,6 +135,7 @@ class _UploadCertificateState extends State<UploadCertificate> {
                             type: FileType.custom);
 
                     if (result != null) {
+                      //List<File>files =[File(result.files.toString())];
                       openFile(result.files);
                     } else {
                       // User recanceled the picker

@@ -47,6 +47,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photo library to pick files.</string>
+	<key>NSCameraUsageDescription</key>
+    <string>Camera Permission Description</string>
 
 </dict>
 </plist>

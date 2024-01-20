@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:textfield_datepicker/textfield_datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:verifyme/document.dart';
@@ -23,6 +26,42 @@ class _UploadResourcesState extends State<UploadResources> {
   bool selected = true;
   bool dataShow = false;
   File? file;
+  PlatformFile? myfile;
+  UploadTask? uploadTask;
+
+  Widget buildProgress() {
+    return StreamBuilder<TaskSnapshot>(
+        stream: uploadTask?.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final data = snapshot.data!;
+            double progress = data.bytesTransferred / data.totalBytes;
+
+            return LinearPercentIndicator(
+                curve: Curves.linear,
+                animationDuration: 500,
+                animateFromLastPercent: true,
+                center: Text(
+                  "${(100 * progress).toStringAsFixed(2)}%",
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold),
+                ),
+                //backgroundColor: Colors.grey.shade500,
+                fillColor: Colors.transparent,
+                animation: true,
+                progressColor: Colors.amber,
+                barRadius: Radius.circular(10.r),
+                lineHeight: 16.h,
+                percent: progress);
+
+            //return Text("${100 * progress}");
+          } else {
+            return Text("");
+          }
+        });
+  }
 
   @override
   void initState() {
@@ -57,21 +96,24 @@ class _UploadResourcesState extends State<UploadResources> {
         height: 30,
       ),
       GestureDetector(
-        onTap: () async {
-          FilePickerResult? result =
-              await FilePicker.platform.pickFiles(allowMultiple: false);
+        onTap: selected
+            ? () async {
+                FilePickerResult? result =
+                    await FilePicker.platform.pickFiles(allowMultiple: false);
 
-          if (result != null) {
-            file = File(result.files.single.name);
+                if (result != null) {
+                  //file = File(result.toString());
+                  myfile = result.files.single;
 
-            setState(() {
-              selected = false;
-            });
-          } else {
-            // User recanceled the picker
-            return;
-          }
-        },
+                  setState(() {
+                    selected = false;
+                  });
+                } else {
+                  // User recanceled the picker
+                  return;
+                }
+              }
+            : () {},
         child: DottedBorder(
             color: Colors.grey,
             dashPattern: [4, 4],
@@ -103,22 +145,34 @@ class _UploadResourcesState extends State<UploadResources> {
                       ],
                     )
                   : Container(
-                      height: 10,
-                      width: 10,
                       decoration: BoxDecoration(
-                        color: Colors.amber,
+                        color: Colors.yellow.shade200,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: dataShow
-                          ? Center(
-                              child: Text(file!.path),
-                            )
-                          : Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.red,
-                              ),
-                            ),
-                    ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  selected = true;
+                                });
+                              },
+                              child: Text("Remove",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold))),
+                          Text(
+                            myfile!.name,
+                            style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          buildProgress()
+                        ],
+                      )),
 
               //color: Colors.black,
             )),
@@ -245,26 +299,50 @@ class _UploadResourcesState extends State<UploadResources> {
       SizedBox(
         height: 10.h,
       ),
-      Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
+      GestureDetector(
+        onTap: () async {
+          final path = 'files/${myfile!.name}';
+          final file = File(myfile!.path!);
 
-          // BoxShadow(
-          //   color: Colors.grey.shade900,
-          //   offset: Offset(1.0, 6.0), //(x,y)
-          //   blurRadius: 16.0,
-          // ),
+          final ref = FirebaseStorage.instance.ref().child(path);
 
-          //borderRadius: BorderRadius.circular(20),
-          color: Colors.amber,
+          setState(() {
+            uploadTask = ref.putFile(file);
+          });
+
+          final snapshot = await uploadTask!.whenComplete(() {});
+
+          Fluttertoast.showToast(msg: "Successfully Uploaded");
+
+          final url = await snapshot.ref.getDownloadURL();
+
+          print("Download Link $url");
+
+          setState(() {
+            uploadTask = null;
+          });
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.r),
+
+            // BoxShadow(
+            //   color: Colors.grey.shade900,
+            //   offset: Offset(1.0, 6.0), //(x,y)
+            //   blurRadius: 16.0,
+            // ),
+
+            //borderRadius: BorderRadius.circular(20),
+            color: Colors.amber,
+          ),
+          width: 320.w,
+          height: 50.h,
+          child: Center(
+              child: Text(
+            "Upload Resources",
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+          )),
         ),
-        width: 320.w,
-        height: 50.h,
-        child: Center(
-            child: Text(
-          "Upload Resources",
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-        )),
       ),
       SizedBox(
         height: 10.h,
@@ -288,7 +366,7 @@ class _UploadResourcesState extends State<UploadResources> {
             color: Colors.amber,
           ),
           width: 320.sp,
-          height: 130.sp,
+          height: 100.sp,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -307,6 +385,9 @@ class _UploadResourcesState extends State<UploadResources> {
             ],
           ),
         ),
+      ),
+      SizedBox(
+        height: 20,
       ),
     ]));
   }

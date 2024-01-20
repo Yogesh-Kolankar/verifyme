@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class ScanExample extends StatefulWidget {
-  const ScanExample({super.key});
+  File? photo;
+  ScanExample({required this.photo, super.key});
 
   @override
   State<ScanExample> createState() => _ScanExampleState();
@@ -10,6 +13,6 @@ class ScanExample extends StatefulWidget {
 class _ScanExampleState extends State<ScanExample> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(body: Image.file(widget.photo!));
   }
 }

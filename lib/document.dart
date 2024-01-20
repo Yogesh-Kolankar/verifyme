@@ -41,9 +41,36 @@ class _DocumentScreenState extends State<DocumentScreen> {
                   ),
                   IconButton(
                       onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                        PersistentNavBarNavigator.pushNewScreen(context,
-                            screen: Login(), withNavBar: false);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                backgroundColor: Colors.amber,
+                                title: Text('Do you want to log out'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        FirebaseAuth.instance.signOut();
+                                        PersistentNavBarNavigator.pushNewScreen(
+                                            context,
+                                            screen: Login(),
+                                            withNavBar: false);
+                                      },
+                                      child: Text("Yes",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20))),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("No",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20)))
+                                ],
+                              );
+                            });
                       },
                       icon: Icon(
                         Icons.settings,

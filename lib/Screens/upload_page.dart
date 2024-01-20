@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:verifyme/Screens/scan_resources.dart';
 import 'package:verifyme/Screens/upload%20certificate/upload_certificate.dart';
 import 'package:verifyme/Screens/upload_resources.dart';
+import 'dart:io';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -12,6 +13,8 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
+  File? scannedImage;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +131,8 @@ class _UploadPageState extends State<UploadPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ScanResources(),
+                        builder: (context) =>
+                            ScanResources(scannedImage: scannedImage),
                       ));
                 },
                 child: Stack(
